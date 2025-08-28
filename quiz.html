@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    h1 { margin-bottom: 20px; }
+    .question { font-size: 20px; margin: 20px 0; }
+    .options { list-style: none; padding: 0; }
+    .options li {
+      background: #eee;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options li:hover { background: #d3d3d3; }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    .hidden { display: none; }
+    .result {
+      font-size: 22px;
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz App</h1>
+    <div id="quiz">
+      <p class="question" id="question">Click start to begin!</p>
+      <ul class="options" id="options"></ul>
+      <button id="nextBtn" class="hidden">Next</button>
+      <button id="startBtn">Start Quiz</button>
+      <p class="result hidden" id="result"></p>
+    </div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "Which language is used for web development?",
+        options: ["Python", "Java", "JavaScript", "C++"],
+        answer: "JavaScript"
+      },
+      {
+        question: "Which tag is used to create a hyperlink in HTML?",
+        options: ["<link>", "<a>", "<href>", "<p>"],
+        answer: "<a>"
+      },
+      {
+        question: "Which CSS property changes text color?",
+        options: ["font-style", "color", "background", "text-align"],
+        answer: "color"
+      },
+      {
+        question: "Which symbol is used for comments in JavaScript?",
+        options: ["//", "/* */", "#", "<!-- -->"],
+        answer: "//"
+      },
+      {
+        question: "Which database language is used for queries?",
+        options: ["SQL", "NoSQL", "Python", "MongoDB"],
+        answer: "SQL"
+      },
+      // New 5 Questions
+      {
+        question: "Which HTML tag is used to display an image?",
+        options: ["<img>", "<image>", "<src>", "<picture>"],
+        answer: "<img>"
+      },
+      {
+        question: "Which CSS property controls the size of text?",
+        options: ["font-style", "font-size", "text-size", "size"],
+        answer: "font-size"
+      },
+      {
+        question: "Inside which HTML element do we put JavaScript?",
+        options: ["<js>", "<javascript>", "<script>", "<code>"],
+        answer: "<script>"
+      },
+      {
+        question: "Which HTML tag is used for a table row?",
+        options: ["<td>", "<tr>", "<th>", "<row>"],
+        answer: "<tr>"
+      },
+      {
+        question: "Which company developed JavaScript?",
+        options: ["Google", "Microsoft", "Netscape", "Oracle"],
+        answer: "Netscape"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("nextBtn");
+    const startBtn = document.getElementById("startBtn");
+    const resultEl = document.getElementById("result");
+
+    function startQuiz() {
+      startBtn.classList.add("hidden");
+      resultEl.classList.add("hidden");
+      score = 0;
+      currentQuestion = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuiz = quizData[currentQuestion];
+      questionEl.textContent = currentQuiz.question;
+
+      currentQuiz.options.forEach(option => {
+        const li = document.createElement("li");
+        li.textContent = option;
+        li.onclick = () => selectAnswer(li, currentQuiz.answer);
+        optionsEl.appendChild(li);
+      });
+    }
+
+    function resetState() {
+      nextBtn.classList.add("hidden");
+      while (optionsEl.firstChild) {
+        optionsEl.removeChild(optionsEl.firstChild);
+      }
+    }
+
+    function selectAnswer(selectedLi, correctAnswer) {
+      const allOptions = optionsEl.children;
+      for (let li of allOptions) {
+        li.style.pointerEvents = "none";
+        if (li.textContent === correctAnswer) {
+          li.style.background = "lightgreen";
+        } else {
+          li.style.background = "salmon";
+        }
+      }
+
+      if (selectedLi.textContent === correctAnswer) {
+        score++;
+      }
+      nextBtn.classList.remove("hidden");
+    }
+
+    function showResult() {
+      resetState();
+      questionEl.textContent = "Quiz Completed!";
+      resultEl.textContent = `Your Score: ${score} / ${quizData.length}`;
+      resultEl.classList.remove("hidden");
+      startBtn.textContent = "Restart Quiz";
+      startBtn.classList.remove("hidden");
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    startBtn.addEventListener("click", startQuiz);
+  </script>
+</body>
+</html>
